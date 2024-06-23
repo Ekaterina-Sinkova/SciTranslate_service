@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SciTranslate</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .jumbotron {
+            background-color: #eceded;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control-file {
+            margin-bottom: 10px;
+        }
+        .fade-in {
+            animation: fade-in 1s ease-in-out;
+        }
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1 class="display-4" style="font-family: 'Open Sans', sans-serif;">Welcome to the SciTranslate service!</h1>
+        <p class="lead">This is a web app that translates scientific articles from Russian into English.</p>
+    </div>
+    <div class="container">
+       <div class="row">
+           <div class="col-md-6">
+               <div class="form-group">
+                   <form id="translate-form">
+                       <textarea name="text" rows="4" cols="50" class="form-control"></textarea><br>
+                       <button type="submit" class="btn btn-primary"><span class="fas fa-language"></span> Translate</button>
+                   </form>
+                   <div id="translation" class="mt-3"></div>
+               </div>
+           </div>
+           <div class="col-md-6">
+               <div class="form-group">
+                   <form action="/translate_article/" method="post" enctype="multipart/form-data">
+                       <input type="file" name="file" class="form-control-file">
+                       <button type="submit" class="btn btn-primary fade-in">Translate Article</button>
+                   </form>
+               </div>
+           </div>
+       </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Submit the form and fetch the translation data
+        document.getElementById("translate-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch("/translate/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(formData)
+            });
+            const data = await response.json();
+
+            // Display the translation data in a div
+            const translationDiv = document.getElementById("translation");
+            translationDiv.textContent = data.translation;
+        });
+    </script>
+</body>
+</html>
